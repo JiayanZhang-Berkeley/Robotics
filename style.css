@@ -1,0 +1,166 @@
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #E5E7EB; /* A light gray for the ring's track */
+    border-bottom-color: #111827; /* Black for the spinning part */
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+  opacity: 0;
+  will-change: transform, opacity; /* Hint to the browser */
+}
+
+.map-title-overlay {
+    color: white;
+    font-family: 'Inter', sans-serif;
+}
+
+#background-animation span {
+    transition: background-color 0.4s ease-out;
+}
+
+.map-title-overlay h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.leaflet-popup-content {
+    font-size: 18px; /* Adjust this value as needed */
+}
+
+#background-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 30px; /* Small font for higher detail */
+    line-height: 0.7; /* Tight lines to form a dense surface */
+    color: rgba(0, 0, 0, 0.1); /* Subtle color */
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+}
+
+.robot {
+    position: absolute;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.01);
+    user-select: none; /* Prevents accidentally selecting the text */
+    will-change: transform; /* Hint to the browser for performance */
+}
+
+/* --- Styles for the Rolling Ticker --- */
+
+.ticker-track {
+    display: inline-block;
+    /* The animation duration controls the speed. A larger number is slower. */
+    animation: scroll-left 120s linear infinite;
+}
+
+.ticker-item {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 2rem; /* Adds space between each company */
+    font-size: 1rem;
+    font-weight: 500;
+    will-change: transform;
+}
+
+.ticker-item .rank {
+    font-weight: 700;
+    margin-right: 0.75rem;
+    color: #a5b4fc; /* Tailwind's indigo-300 */
+}
+
+.ticker-item .name {
+    color: #e5e7eb; /* Tailwind's gray-200 */
+}
+
+.ticker-item .change-up {
+    color: #4ade80; /* Tailwind's green-400 */
+    margin-left: 0.75rem;
+}
+
+.ticker-item .change-down {
+    color: #f87171; /* Tailwind's red-400 */
+    margin-left: 0.75rem;
+}
+
+/* The keyframes that define the scrolling animation */
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        /* Moves the content left by exactly half its width for a seamless loop */
+        transform: translateX(-50%);
+    }
+}
+
+/* --- Word Cloud Background Styles --- */
+#word-cloud-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+}
+
+/* Style for each word in the cloud */
+.word {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    fill: rgba(0, 0, 0, 0.15); /* Use 'fill' because we'll render SVG text */
+    opacity: 0; /* Start invisible */
+    transition: opacity 1.5s ease; /* Animation for appearing */
+}
+
+/* Class to make words visible */
+.word.visible {
+    opacity: 1;
+}
+
+#ranking-ticker-container {
+    position: fixed; /* Changed from sticky */
+    top: 0;
+    left: 0;
+    width: 100%; /* Ensures it spans the entire width */
+    z-index: 50; /* High z-index to ensure it stays on top */
+}
+

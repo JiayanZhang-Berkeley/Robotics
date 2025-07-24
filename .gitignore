@@ -1,0 +1,10 @@
+# Ignore Python virtual environment
+.venv/
+
+# Ignore local data and scripts
+generate_data_json.py
+download_logos.py
+data.json
+
+# Ignore downloaded logos
+logos/ 
