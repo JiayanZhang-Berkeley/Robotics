@@ -164,3 +164,11 @@ body {
     z-index: 50; /* High z-index to ensure it stays on top */
 }
 
+#map-placeholder {
+    position: relative;
+    z-index: 1; /* Lower than the ticker */
+}
+.leaflet-container {
+    z-index: 1 !important; /* Ensure Leaflet map stays below the ticker */
+}
+
