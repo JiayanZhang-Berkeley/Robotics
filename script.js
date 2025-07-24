@@ -1,11 +1,7 @@
 // script.js
 
 // --- CONFIGURATION ---
-// (API keys and spreadsheet IDs removed for security)
-const MAIN_SHEET_NAME = 'ListJuly1';
-const STATS_SHEET_NAME = 'Statistics';
-const RANK_SHEET_NAME = 'Rank Difference';
-const API_BASE_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values`;
+// (All spreadsheet and API references removed for static deployment)
 
 // Define the columns to show in the main leaderboard.
 const COLUMNS_TO_SHOW = [
