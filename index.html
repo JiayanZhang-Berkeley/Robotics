@@ -5,249 +5,169 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Robotics Company Growth Leaderboard</title>
 
-    <link
-            rel="stylesheet"
-            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-            integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-            crossorigin=""
-    />
+    <!-- External Stylesheets -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="style.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+
+    <!-- External Scripts (head) -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/jasondavies/d3-cloud@1.2.5/build/d3.layout.cloud.js"></script>
-
-    <link rel="stylesheet" href="style.css"/>
-    <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-            rel="stylesheet"
-    />
-<!--    <script src="https://cdn.skypack.dev/simplex-noise"></script>-->
-<!--    <link rel="stylesheet" href="style.css" />-->
 </head>
 
 <body class="bg-gray-50 font-sans text-gray-900">
-<!-- Language Toggle Button -->
-<div id="language-toggle-container" style="position: fixed; top: 24px; right: 24px; z-index: 1000;">
-    <button id="language-toggle" class="bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm font-semibold text-gray-800 hover:bg-blue-700 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
-        English
-    </button>
-</div>
-<section id="ranking-ticker-container" class="bg-gray-900 text-white overflow-hidden whitespace-nowrap py-3 shadow-lg">
-    <div class="ticker-track">
+    <!-- Language Toggle Button -->
+    <div id="language-toggle-container" style="position: fixed; top: 64px; right: 24px; z-index: 1000;">
+        <button id="language-toggle" class="bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm font-semibold text-gray-800 hover:bg-blue-700 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+            English
+        </button>
     </div>
-</section>
-<div class="container mx-auto p-4 md:p-8">
-    <header class="min-h-screen flex flex-col items-center justify-center text-center p-4 relative pt-[50vh]">
-        <div id="word-cloud-background"></div>
-        <div id="main-title-container">
-            <h1 class="text-4xl md:text-8xl font-bold text-gray-900 animate-fade-in-up" data-i18n="main_title">
-                Growth Momentum Index For Robotics
-            </h1>
-            <p
-                    class="mt-4 text-lg md:text-3xl text-gray-600 max-w-2xl mx-auto animate-fade-in-up"
-                    style="animation-delay: 0.5s;"
-                    data-i18n="main_subtitle"
-            >
-                A leaderboard of the world's fastest growing robotics companies.
-            </p>
-        </div>
-        <div class="absolute bottom-10 animate-fade-in-up" style="animation-delay: 0.5s;">
-            <a href="#search-box" aria-label="Scroll down">
-                <svg
-                        class="w-8 h-8 text-gray-500 animate-bounce"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                >
-                    <path d="M19 9l-7 7-7-7"/>
-                </svg>
-            </a>
-        </div>
-    </header>
 
-    <section class="mb-4">
-        <input
-                type="search"
-                id="search-box"
-                placeholder="Search company by name..."
-                class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-shadow"
-                data-i18n-placeholder="search_placeholder"
-        />
+    <!-- Ticker Section -->
+    <section id="ranking-ticker-container" class="bg-gray-900 text-white overflow-hidden whitespace-nowrap py-3 shadow-lg">
+        <div class="ticker-track"></div>
     </section>
 
-    <section
-            id="leaderboard-container"
-            class="bg-white rounded-lg shadow-sm border border-gray-200 max-h-[70vh] overflow-y-auto overflow-x-auto mb-8"
-    >
-        <div class="p-8 text-center" id="loading-state">
-            <div class="loader inline-block"></div>
-            <p class="mt-4 text-gray-500" data-i18n="loading_leaderboard">Loading Leaderboard...</p>
-        </div>
-    </section>
-
-    <section id="statistics-container" class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"></section>
-    <section id="charts-container" class="mt-8">
-        <div class="relative bg-white min-h-[600px] p-4 rounded-lg shadow-sm">
-            <canvas id="fundingAnalysisChart"></canvas>
-        </div>
-    </section>
-
-    <section
-            id="map-placeholder"
-            class="mt-8 bg-white p-4 rounded-lg shadow-sm min-h-[400px] flex items-center justify-center border border-gray-200"
-    ></section>
-
-    <section class="mt-12 bg-white rounded-lg shadow-sm">
-        <div class="p-8 md:p-12 grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-8 items-start">
-            <div class="md:col-span-2">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4" data-i18n="leaderboard_explained_title">Leaderboard Explained: Measuring Market Momentum</h2>
-                <p class="text-gray-600 mb-4" data-i18n="leaderboard_explained_1">
-                    Our leaderboard ranks robotics companies based on
-                    <strong>Funding Growth Rate (FGR)</strong>, a metric that measures how quickly a company secures significant capital. This reflects investor confidence, execution speed, and market validation, providing a standardized way to compare fundraising performance. Only companies with a funding round in the last 12 months and over $1M total funding are included.
+    <div class="container mx-auto p-4 md:p-8">
+        <!-- ================= HEADER ================= -->
+        <header class="min-h-screen flex flex-col items-center justify-center text-center p-4 relative pt-[50vh]">
+            <div id="word-cloud-background"></div>
+            <div id="main-title-container">
+                <h1 class="text-4xl md:text-8xl font-bold text-gray-900 animate-fade-in-up" data-i18n="main_title">
+                    Growth Momentum Index For Robotics
+                </h1>
+                <p class="mt-4 text-lg md:text-3xl text-gray-600 max-w-2xl mx-auto animate-fade-in-up" style="animation-delay: 0.5s;" data-i18n="main_subtitle">
+                    A leaderboard of the world's fastest growing robotics companies.
                 </p>
-                <p class="text-gray-600 mb-6" data-i18n="leaderboard_explained_2">
-                    Funding Growth Rate is the slope of a company's funding curve. This is derived from the classical startup growth curve, where a healthy company should attract increasing funding growth, indicated by the upward momentum, and vice versa.
-                </p>
-                <div class="text-xl font-medium text-gray-800 flex flex-wrap items-center space-x-2">
-                    <span data-i18n="fgr_label">FGR =</span>
-                    <label class="flex items-center space-x-2">
-                        <span data-i18n="funding_amount_label">Funding Amount</span>
-                        <input
-                                type="number"
-                                id="fundingAmount"
-                                placeholder="M$"
-                                class="w-32 p-1 border-b border-gray-400 focus:outline-none focus:border-blue-500 text-base text-center"
-                        />
-                        <span data-i18n="funding_amount_unit">M$</span>
-                    </label>
-                    <span>/</span>
-                    <label class="flex items-center space-x-2">
-                        <span data-i18n="time_label">Time</span>
-                        <input
-                                type="number"
-                                id="timeSince"
-                                placeholder="Months"
-                                class="w-24 p-1 border-b border-gray-400 focus:outline-none focus:border-blue-500 text-base text-center"
-                        />
-                        <span data-i18n="time_unit">Months</span>
-                    </label>
+            </div>
+            <div class="absolute bottom-10 animate-fade-in-up" style="animation-delay: 0.5s;">
+                <a href="#search-box" aria-label="Scroll down">
+                    <svg class="w-8 h-8 text-gray-500 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </a>
+            </div>
+        </header>
+
+        <!-- ================= SEARCH ================= -->
+        <section class="mb-4">
+            <input type="search" id="search-box" placeholder="Search company by name..." class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-shadow" />
+        </section>
+
+        <!-- ================= LEADERBOARD ================= -->
+        <section id="leaderboard-container" class="bg-white rounded-lg shadow-sm border border-gray-200 max-h-[70vh] overflow-y-auto overflow-x-auto mb-8">
+            <div class="p-8 text-center" id="loading-state">
+                <div class="loader inline-block"></div>
+                <p class="mt-4 text-gray-500" data-i18n="loading_leaderboard">Loading Leaderboard...</p>
+            </div>
+        </section>
+
+        <!-- ================= STATISTICS ================= -->
+        <section id="statistics-container" class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"></section>
+
+        <!-- ================= CHARTS ================= -->
+        <section id="charts-container" class="mt-8">
+            <div class="relative bg-white min-h-[600px] p-4 rounded-lg shadow-sm">
+                <canvas id="fundingAnalysisChart"></canvas>
+            </div>
+        </section>
+
+        <!-- ================= MAP ================= -->
+        <section id="map-placeholder" class="mt-8 bg-white p-4 rounded-lg shadow-sm min-h-[400px] flex items-center justify-center border border-gray-200"></section>
+
+        <!-- ================= EXPLANATION ================= -->
+        <section class="mt-12 bg-white rounded-lg shadow-sm">
+            <div class="p-8 md:p-12 grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-8 items-start">
+                <div class="md:col-span-2">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4" data-i18n="leaderboard_explained_title">Leaderboard Explained: Measuring Market Momentum</h2>
+                    <p class="text-gray-600 mb-4" data-i18n="leaderboard_explained_1">
+                        Our leaderboard ranks robotics companies based on <strong>Funding Growth Rate (FGR)</strong>, a metric that measures how quickly a company secures significant capital. This reflects investor confidence, execution speed, and market validation, providing a standardized way to compare fundraising performance. To ensure relevance, only companies with a funding round in the last 12 months are included.
+                    </p>
+                    <p class="text-gray-600 mb-6" data-i18n="leaderboard_explained_2">
+                        Funding Growth Rate is the slope of a company's funding curve. This is derived from the classical “S”-shaped startup growth curve, where a healthy company should attract increasing funding growth, indicated by the upward momentum, and vice versa.
+                    </p>
+                    <div class="text-xl font-medium text-gray-800 flex flex-wrap items-center space-x-2">
+                        <span data-i18n="fgr_label">FGR =</span>
+                        <label class="flex items-center space-x-2">
+                            <span data-i18n="funding_amount_label">Funding Amount</span>
+                            <input type="number" id="fundingAmount" placeholder="M$" class="w-32 p-1 border-b border-gray-400 focus:outline-none focus:border-blue-500 text-base text-center" />
+                            <span data-i18n="funding_amount_unit">M$</span>
+                        </label>
+                        <span>/</span>
+                        <label class="flex items-center space-x-2">
+                            <span data-i18n="time_label">Time</span>
+                            <input type="number" id="timeSince" placeholder="Months" class="w-24 p-1 border-b border-gray-400 focus:outline-none focus:border-blue-500 text-base text-center" />
+                            <span data-i18n="time_unit">Months</span>
+                        </label>
+                    </div>
+                    <div id="result" class="mt-4 text-gray-800 hidden">
+                        <p class="text-sm text-gray-500" data-i18n="estimated_fgr">Estimated Funding Growth Rate</p>
+                        <div class="flex items-baseline space-x-3 flex-wrap">
+                            <p id="resultText" class="text-xl font-bold"></p>
+                            <p id="preciseRankText" class="text-sm font-medium text-blue-500"></p>
+                            <p id="rankText" class="text-base text-green-600 font-medium"></p>
+                        </div>
+                    </div>
+                    <div id="error" class="mt-4 bg-red-100 text-red-700 p-2 rounded hidden"></div>
                 </div>
-                <div id="result" class="mt-4 text-gray-800 hidden">
-                    <p class="text-sm text-gray-500" data-i18n="estimated_fgr">Estimated Funding Growth Rate</p>
-                    <div class="flex items-baseline space-x-3 flex-wrap">
-                        <p id="resultText" class="text-xl font-bold"></p>
-                        <p id="preciseRankText" class="text-sm font-medium text-blue-500"></p>
-                        <p id="rankText" class="text-base text-green-600 font-medium"></p>
+                <div class="md:col-span-1">
+                    <img loading="lazy" src="FGR.jpg" alt="Chart showing Funding Growth Rate as the slope of a startup's funding curve." class="w-full h-auto rounded" />
+                    <p class="mt-2 text-sm text-gray-500 text-center" data-i18n="startup_growth_caption">Typical startup capital growth</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SUBSCRIPTION ================= -->
+        <section class="mt-12 bg-white rounded-lg shadow-sm">
+            <div class="p-8 md:p-12 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 items-center">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900" data-i18n="join_insiders_title">Join the Insider's List (FREE!)</h2>
+                    <p class="mt-2 text-gray-600" data-i18n="join_insiders_desc">Get weekly updates on the fastest-moving companies in robotics, right in your inbox.</p>
+                </div>
+                <div id="form-container" class="w-full">
+                    <form id="subscribe-form" class="flex flex-col gap-3">
+                        <input type="email"
+                               required
+                               class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                               placeholder="your.email@example.com"
+                               name="entry.1653911041"
+                               data-i18n-placeholder="email_placeholder" />
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <select class="sm:col-span-2 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
+                                    name="entry.2049309856"
+                                    data-i18n-select="role_select">
+                                <option>I'm an Investor</option>
+                                <option>I'm a Founder</option>
+                                <option>I'm an Engineer</option>
+                                <option>I'm an Enthusiast</option>
+                            </select>
+                            <button type="submit" class="sm:col-span-1 bg-gray-900 text-white font-semibold p-3 rounded-lg hover:bg-blue-700 transition-colors" data-i18n="subscribe_btn">Subscribe</button>
+                        </div>
+                    </form>
+                    <div id="success-message" style="display: none;" class="p-4 bg-green-50 border border-green-200 rounded-lg text-center">
+                        <h2 class="text-xl font-bold text-green-800" data-i18n="success_title">Welcome in!</h2>
+                        <p class="text-green-700 mt-1" data-i18n="success_msg">You've been successfully subscribed.</p>
                     </div>
                 </div>
-                <div id="error" class="mt-4 bg-red-100 text-red-700 p-2 rounded hidden"></div>
             </div>
-            <div class="md:col-span-1">
-                <img    loading="lazy"
-                        src="FGR.jpg"
-                        alt="Chart showing Funding Growth Rate as the slope of a startup's funding curve."
-                        class="w-full h-auto rounded"
-                />
-                <p class="mt-2 text-sm text-gray-500 text-center" data-i18n="startup_growth_caption">Typical startup capital growth</p>
+        </section>
+
+        <!-- ================= COMPANY SUBMISSION ================= -->
+        <section class="mt-8 text-center bg-slate-50 rounded-lg p-8 md:p-12">
+            <h2 class="text-2xl font-bold text-gray-900" data-i18n="missing_company_title">您的公司是否未上榜？</h2>
+            <p class="mt-2 text-gray-600 max-w-xl mx-auto" data-i18n="missing_company_desc">没有找到您的公司？或是您的初创企业想要曝光？告诉我们。</p>
+            <div class="mt-6">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSc0QU2-vmbtGdgsYzPZH-9GAi3dPP7X6oaEj9WNny77INg2Qg/viewform?usp=header" class="inline-block bg-white text-gray-800 font-semibold py-3 px-6 rounded-lg border border-gray-300 hover:bg-gray-100 transition-colors" data-i18n="submit_company_btn">提交公司审核</a>
             </div>
-        </div>
-    </section>
-<!--    submission section -->
-    <section class="mt-12 bg-white rounded-lg shadow-sm">
-        <div class="p-8 md:p-12 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 items-center">
-            <div>
-                <h2 class="text-2xl font-bold text-gray-900" data-i18n="join_insiders_title">Join the Insider's List</h2>
-                <p class="mt-2 text-gray-600" data-i18n="join_insiders_desc">
-                    Get weekly updates on the fastest-moving companies in robotics, right in your inbox.
-                </p>
-            </div>
+        </section>
+    </div>
 
-            <div id="form-container" class="w-full">
-                <form id="subscribe-form" class="flex flex-col gap-3">
-                    <input
-                            type="email"
-                            required
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                            placeholder="your.email@example.com"
-                            name="entry.1653911041"
-                            data-i18n-placeholder="email_placeholder"
-                    />
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <select
-                                class="sm:col-span-2 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
-                                name="entry.2049309856"
-                                data-i18n-select="role_select"
-                        >
-                            <option>I'm an Investor</option>
-                            <option>I'm a Founder</option>
-                            <option>I'm an Engineer</option>
-                            <option>I'm an Enthusiast</option>
-                        </select>
-                        <button
-                                type="submit"
-                                class="sm:col-span-1 bg-gray-900 text-white font-semibold p-3 rounded-lg hover:bg-blue-700 transition-colors"
-                                data-i18n="subscribe_btn"
-                        >
-                            Subscribe
-                        </button>
-                    </div>
-                </form>
-
-                <div id="success-message" style="display: none;" class="p-4 bg-green-50 border border-green-200 rounded-lg text-center">
-                    <h2 class="text-xl font-bold text-green-800" data-i18n="success_title">Welcome in!</h2>
-                    <p class="text-green-700 mt-1" data-i18n="success_msg">You've been successfully subscribed.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <script>
-        const form = document.getElementById('subscribe-form');
-        const successMessage = document.getElementById('success-message');
-
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const url = "https://docs.google.com/forms/d/e/1FAIpQLSfBoAD6aNuCJC8aJKjM_LnOXaE5-e6d5hpA0asSEZdXiyDoSQ/formResponse";
-            fetch(url, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: new FormData(form)
-            })
-            .then(() => {
-                form.style.display = 'none';
-                successMessage.style.display = 'block';
-            })
-            .catch(error => console.error('Error!', error.message));
-        });
-    </script>
-    <!--    external google link -->
-    <section class="mt-8 text-center bg-slate-50 rounded-lg p-8 md:p-12">
-        <h2 class="text-2xl font-bold text-gray-900" data-i18n="missing_company_title">Is Your Company Missing?</h2>
-        <p class="mt-2 text-gray-600 max-w-xl mx-auto" data-i18n="missing_company_desc">
-            Haven't found your company on the list? Or are you a new startup wanting to go unstealth? Let us know.
-        </p>
-        <div class="mt-6">
-            <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLSc0QU2-vmbtGdgsYzPZH-9GAi3dPP7X6oaEj9WNny77INg2Qg/viewform?usp=header"
-                class="inline-block bg-white text-gray-800 font-semibold py-3 px-6 rounded-lg border border-gray-300 hover:bg-gray-100 transition-colors"
-                data-i18n="submit_company_btn"
-            >
-                Submit a Company for Review
-            </a>
-        </div>
-    </section>
-</div>
-
-<script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin=""
-></script>
-<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-<script src="https://unpkg.com/countup.js@2.8.0/dist/countUp.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.tailwindcss.com"></script>
-<script type="module" src="script.js"></script>
+    <!-- ================= SCRIPTS ================= -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/countup.js@2.8.0/dist/countUp.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
