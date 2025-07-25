@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html id="html-root" lang="en">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -24,6 +24,12 @@
 </head>
 
 <body class="bg-gray-50 font-sans text-gray-900">
+<!-- Language Toggle Button -->
+<div id="language-toggle-container" style="position: fixed; top: 24px; right: 24px; z-index: 1000;">
+    <button id="language-toggle" class="bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm font-semibold text-gray-800 hover:bg-blue-700 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+        English
+    </button>
+</div>
 <section id="ranking-ticker-container" class="bg-gray-900 text-white overflow-hidden whitespace-nowrap py-3 shadow-lg">
     <div class="ticker-track">
     </div>
@@ -32,12 +38,13 @@
     <header class="min-h-screen flex flex-col items-center justify-center text-center p-4 relative pt-[50vh]">
         <div id="word-cloud-background"></div>
         <div id="main-title-container">
-            <h1 class="text-4xl md:text-8xl font-bold text-gray-900 animate-fade-in-up">
+            <h1 class="text-4xl md:text-8xl font-bold text-gray-900 animate-fade-in-up" data-i18n="main_title">
                 Growth Momentum Index For Robotics
             </h1>
             <p
                     class="mt-4 text-lg md:text-3xl text-gray-600 max-w-2xl mx-auto animate-fade-in-up"
                     style="animation-delay: 0.5s;"
+                    data-i18n="main_subtitle"
             >
                 A leaderboard of the world's fastest growing robotics companies.
             </p>
@@ -65,6 +72,7 @@
                 id="search-box"
                 placeholder="Search company by name..."
                 class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-shadow"
+                data-i18n-placeholder="search_placeholder"
         />
     </section>
 
@@ -74,7 +82,7 @@
     >
         <div class="p-8 text-center" id="loading-state">
             <div class="loader inline-block"></div>
-            <p class="mt-4 text-gray-500">Loading Leaderboard...</p>
+            <p class="mt-4 text-gray-500" data-i18n="loading_leaderboard">Loading Leaderboard...</p>
         </div>
     </section>
 
@@ -93,49 +101,40 @@
     <section class="mt-12 bg-white rounded-lg shadow-sm">
         <div class="p-8 md:p-12 grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-8 items-start">
             <div class="md:col-span-2">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Leaderboard Explained: Measuring Market Momentum</h2>
-                <p class="text-gray-600 mb-4">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4" data-i18n="leaderboard_explained_title">Leaderboard Explained: Measuring Market Momentum</h2>
+                <p class="text-gray-600 mb-4" data-i18n="leaderboard_explained_1">
                     Our leaderboard ranks robotics companies based on
-                    <strong>Funding Growth Rate (FGR)</strong>, a metric that measures how quickly a company secures
-                    significant
-                    capital. This reflects investor confidence, execution speed, and market validation, providing a
-                    standardized
-                    way to compare fundraising performance. Only companies with a funding round in the last 12 months
-                    are included.
+                    <strong>Funding Growth Rate (FGR)</strong>, a metric that measures how quickly a company secures significant capital. This reflects investor confidence, execution speed, and market validation, providing a standardized way to compare fundraising performance. Only companies with a funding round in the last 12 months and over $1M total funding are included.
                 </p>
-                <p class="text-gray-600 mb-6">
-                    Funding Growth Rate is the slope of a company's funding curve. This is derived from the classical
-                    startup
-                    growth curve, where a healthy company should attract increasing funding growth, indicated by the
-                    upward
-                    momentum, and vice versa.
+                <p class="text-gray-600 mb-6" data-i18n="leaderboard_explained_2">
+                    Funding Growth Rate is the slope of a company's funding curve. This is derived from the classical startup growth curve, where a healthy company should attract increasing funding growth, indicated by the upward momentum, and vice versa.
                 </p>
                 <div class="text-xl font-medium text-gray-800 flex flex-wrap items-center space-x-2">
-                    <span>FGR =</span>
+                    <span data-i18n="fgr_label">FGR =</span>
                     <label class="flex items-center space-x-2">
-                        <span>Funding Amount</span>
+                        <span data-i18n="funding_amount_label">Funding Amount</span>
                         <input
                                 type="number"
                                 id="fundingAmount"
                                 placeholder="M$"
                                 class="w-32 p-1 border-b border-gray-400 focus:outline-none focus:border-blue-500 text-base text-center"
                         />
-                        <span>M$</span>
+                        <span data-i18n="funding_amount_unit">M$</span>
                     </label>
                     <span>/</span>
                     <label class="flex items-center space-x-2">
-                        <span>Time</span>
+                        <span data-i18n="time_label">Time</span>
                         <input
                                 type="number"
                                 id="timeSince"
                                 placeholder="Months"
                                 class="w-24 p-1 border-b border-gray-400 focus:outline-none focus:border-blue-500 text-base text-center"
                         />
-                        <span>Months</span>
+                        <span data-i18n="time_unit">Months</span>
                     </label>
                 </div>
                 <div id="result" class="mt-4 text-gray-800 hidden">
-                    <p class="text-sm text-gray-500">Estimated Funding Growth Rate</p>
+                    <p class="text-sm text-gray-500" data-i18n="estimated_fgr">Estimated Funding Growth Rate</p>
                     <div class="flex items-baseline space-x-3 flex-wrap">
                         <p id="resultText" class="text-xl font-bold"></p>
                         <p id="preciseRankText" class="text-sm font-medium text-blue-500"></p>
@@ -150,7 +149,7 @@
                         alt="Chart showing Funding Growth Rate as the slope of a startup's funding curve."
                         class="w-full h-auto rounded"
                 />
-                <p class="mt-2 text-sm text-gray-500 text-center">Typical startup capital growth</p>
+                <p class="mt-2 text-sm text-gray-500 text-center" data-i18n="startup_growth_caption">Typical startup capital growth</p>
             </div>
         </div>
     </section>
@@ -158,8 +157,8 @@
     <section class="mt-12 bg-white rounded-lg shadow-sm">
         <div class="p-8 md:p-12 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 items-center">
             <div>
-                <h2 class="text-2xl font-bold text-gray-900">Join the Insider's List</h2>
-                <p class="mt-2 text-gray-600">
+                <h2 class="text-2xl font-bold text-gray-900" data-i18n="join_insiders_title">Join the Insider's List</h2>
+                <p class="mt-2 text-gray-600" data-i18n="join_insiders_desc">
                     Get weekly updates on the fastest-moving companies in robotics, right in your inbox.
                 </p>
             </div>
@@ -171,11 +170,15 @@
                             required
                             class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                             placeholder="your.email@example.com"
-                            name="entry.1653911041" />
+                            name="entry.1653911041"
+                            data-i18n-placeholder="email_placeholder"
+                    />
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <select
                                 class="sm:col-span-2 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
-                                name="entry.2049309856" >
+                                name="entry.2049309856"
+                                data-i18n-select="role_select"
+                        >
                             <option>I'm an Investor</option>
                             <option>I'm a Founder</option>
                             <option>I'm an Engineer</option>
@@ -184,6 +187,7 @@
                         <button
                                 type="submit"
                                 class="sm:col-span-1 bg-gray-900 text-white font-semibold p-3 rounded-lg hover:bg-blue-700 transition-colors"
+                                data-i18n="subscribe_btn"
                         >
                             Subscribe
                         </button>
@@ -191,8 +195,8 @@
                 </form>
 
                 <div id="success-message" style="display: none;" class="p-4 bg-green-50 border border-green-200 rounded-lg text-center">
-                    <h2 class="text-xl font-bold text-green-800">Welcome in!</h2>
-                    <p class="text-green-700 mt-1">You've been successfully subscribed.</p>
+                    <h2 class="text-xl font-bold text-green-800" data-i18n="success_title">Welcome in!</h2>
+                    <p class="text-green-700 mt-1" data-i18n="success_msg">You've been successfully subscribed.</p>
                 </div>
             </div>
         </div>
@@ -219,14 +223,15 @@
     </script>
     <!--    external google link -->
     <section class="mt-8 text-center bg-slate-50 rounded-lg p-8 md:p-12">
-        <h2 class="text-2xl font-bold text-gray-900">Is Your Company Missing?</h2>
-        <p class="mt-2 text-gray-600 max-w-xl mx-auto">
+        <h2 class="text-2xl font-bold text-gray-900" data-i18n="missing_company_title">Is Your Company Missing?</h2>
+        <p class="mt-2 text-gray-600 max-w-xl mx-auto" data-i18n="missing_company_desc">
             Haven't found your company on the list? Or are you a new startup wanting to go unstealth? Let us know.
         </p>
         <div class="mt-6">
             <a
                 href="https://docs.google.com/forms/d/e/1FAIpQLSc0QU2-vmbtGdgsYzPZH-9GAi3dPP7X6oaEj9WNny77INg2Qg/viewform?usp=header"
                 class="inline-block bg-white text-gray-800 font-semibold py-3 px-6 rounded-lg border border-gray-300 hover:bg-gray-100 transition-colors"
+                data-i18n="submit_company_btn"
             >
                 Submit a Company for Review
             </a>
