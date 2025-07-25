@@ -1,9 +1,7 @@
 // script.js
 
 // --- CONFIGURATION ---
-// (All spreadsheet and API references removed for static deployment)
-
-// Define the columns to show in the main leaderboard.
+// Columns to show in the main leaderboard
 const COLUMNS_TO_SHOW = [
     "Logo",
     "Company Name",
@@ -23,7 +21,7 @@ const companyCounter = document.getElementById('company-counter');
 const leaderboardContainer = document.getElementById('leaderboard-container');
 const statisticsContainer = document.getElementById('statistics-container');
 
-// Global Dictionary for Funding Stage Colors (Updated)
+// --- FUNDING STAGE COLORS ---
 const FUNDING_STAGE_COLORS = {
     'Pre-Seed': {
         labelClasses: 'bg-teal-100 text-teal-800',
@@ -117,8 +115,8 @@ const TRANSLATIONS = {
         search_placeholder: "Search company by name...",
         loading_leaderboard: "Loading Leaderboard...",
         leaderboard_explained_title: "Leaderboard Explained: Measuring Market Momentum",
-        leaderboard_explained_1: "Our leaderboard ranks robotics companies based on <strong>Funding Growth Rate (FGR)</strong>, a metric that measures how quickly a company secures significant capital. This reflects investor confidence, execution speed, and market validation, providing a standardized way to compare fundraising performance. Only companies with a funding round in the last 12 months and over $1M total funding are included.",
-        leaderboard_explained_2: "Funding Growth Rate is the slope of a company's funding curve. This is derived from the classical 'S'-shaped startup growth curve, where a healthy company should attract increasing funding growth, indicated by the upward momentum, and vice versa.",
+        leaderboard_explained_1: "Our leaderboard ranks robotics companies based on <strong>Funding Growth Rate (FGR)</strong>, a metric that measures how quickly a company secures significant capital. This reflects investor confidence, execution speed, and market validation, providing a standardized way to compare fundraising performance. To ensure relevance, only companies with a funding round in the last 12 months are included.",
+        leaderboard_explained_2: "Funding Growth Rate is the slope of a company's funding curve. This is derived from the classical “S”-shaped startup growth curve, where a healthy company should attract increasing funding growth, indicated by the upward momentum, and vice versa.",
         fgr_label: "FGR =",
         funding_amount_label: "Funding Amount",
         funding_amount_unit: "M$",
@@ -126,7 +124,7 @@ const TRANSLATIONS = {
         time_unit: "Months",
         estimated_fgr: "Estimated Funding Growth Rate",
         startup_growth_caption: "Typical startup capital growth",
-        join_insiders_title: "Join the Insider's List",
+        join_insiders_title: "Join the Insider's List (FREE!)",
         join_insiders_desc: "Get weekly updates on the fastest-moving companies in robotics, right in your inbox.",
         email_placeholder: "your.email@example.com",
         subscribe_btn: "Subscribe",
@@ -139,34 +137,37 @@ const TRANSLATIONS = {
     },
     zh: {
         main_title: "机器人公司成长动能排行榜",
-        main_subtitle: "全球增长最快的机器人公司的排行榜。",
+        main_subtitle: "全球增长最快的机器人公司排行榜。",
         search_placeholder: "搜索公司名称...",
         loading_leaderboard: "正在加载排行榜...",
         leaderboard_explained_title: "解析：我们如何用融资增长率衡量动能",
-        leaderboard_explained_1: "我们的排行榜根据<strong>融资增长率（FGR）</strong>对机器人公司进行排名，该指标衡量公司获得新资本注入的速度。这反映了投资者信心、公司营运执行速度和市场认可度，为比较融资表现提供了标准化方式。仅包含过去12个月内有融资事件且总融资超过100万美元的公司。",
-        leaderboard_explained_2: "融资增长率是公司资本曲线的斜率。它源自经典的初创公司增长曲线，健康的公司应吸引不断增长的融资，表现为上升的势头，反之亦然。",
+        leaderboard_explained_1: "我们的排行榜根据<strong>融资增长率（FGR）</strong>对机器人公司进行排名，该指标衡量公司获得新资本注入的速度。此指标反映了投资者信心、公司营运执行速度和市场认可度，为比较融资表现提供了标化方式。为确保及时性，本榜单仅包含过去12个月内有融资事件的公司。",
+        leaderboard_explained_2: "融资增长率是公司资本增长曲线的斜率。它源自经典的初创公司的“S”型增长曲线，健康的公司应吸引不断增长的融资，表现为持续增加的高动能，反之亦然。",
         fgr_label: "FGR =",
         funding_amount_label: "融资金额",
         funding_amount_unit: "百万美元",
         time_label: "时间",
         time_unit: "月",
         estimated_fgr: "预计融资增长率",
-        startup_growth_caption: "典型初创公司资本增长",
-        join_insiders_title: "加入行业内幕名单",
-        join_insiders_desc: "每周获取机器人领域最快公司动态，直达您的邮箱。",
+        startup_growth_caption: "典型初创公司资本增长曲线",
+        join_insiders_title: "加入我们的订阅名单（完全免费！）",
+        join_insiders_desc: "每周获取机器人领域的前沿公司动态及新闻，直达您的邮箱。",
         email_placeholder: "您的邮箱@example.com",
         subscribe_btn: "订阅",
         success_title: "欢迎加入！",
         success_msg: "您已成功订阅。",
-        missing_company_title: "您的公司未上榜？",
-        missing_company_desc: "没有找到您的公司？或您是新创企业想要公开？请告知我们。",
+        missing_company_title: "您的公司是否未上榜？",
+        missing_company_desc: "没有找到您的公司？或是您的初创企业想要曝光？告诉我们。",
         submit_company_btn: "提交公司审核",
-        role_select: ["我是投资人", "我是创始人", "我是工程师", "我是爱好者"]
+        role_select: ["我是投资人", "我是创始人", "我是工程师", "我有兴趣先看看"]
     }
 };
 
 let currentLang = localStorage.getItem('lang') || 'en';
 
+/**
+ * Set the UI language and update all translatable elements.
+ */
 function setLanguage(lang) {
     currentLang = lang;
     localStorage.setItem('lang', lang);
@@ -180,17 +181,11 @@ function setLanguage(lang) {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         let value = TRANSLATIONS[lang][key];
-        if (value && el.tagName === 'H1' || el.tagName === 'H2' || el.tagName === 'P' || el.tagName === 'SPAN' || el.tagName === 'A' || el.tagName === 'BUTTON' || el.tagName === 'DIV') {
-            // If the translation contains HTML (e.g., <strong>), use innerHTML
+        if (value && (el.tagName === 'H1' || el.tagName === 'H2' || el.tagName === 'P' || el.tagName === 'SPAN' || el.tagName === 'A' || el.tagName === 'BUTTON' || el.tagName === 'DIV')) {
             el.innerHTML = value;
         } else if (value) {
             el.textContent = value;
         }
-    });
-    // Update placeholders
-    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-        const key = el.getAttribute('data-i18n-placeholder');
-        if (TRANSLATIONS[lang][key]) el.setAttribute('placeholder', TRANSLATIONS[lang][key]);
     });
     // Update select options
     document.querySelectorAll('[data-i18n-select]').forEach(select => {
