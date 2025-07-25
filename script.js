@@ -1021,4 +1021,24 @@ document.addEventListener('DOMContentLoaded', () => {
     setLanguage(currentLang);
     main(); // This runs your existing leaderboard and word cloud code
     initParallaxTitle(); // This activates the new parallax effect
+
+    // --- SUBSCRIBE FORM HANDLER ---
+    const form = document.getElementById('subscribe-form');
+    const successMessage = document.getElementById('success-message');
+    if (form && successMessage) {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const url = "https://docs.google.com/forms/d/e/1FAIpQLSfBoAD6aNuCJC8aJKjM_LnOXaE5-e6d5hpA0asSEZdXiyDoSQ/formResponse";
+            fetch(url, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: new FormData(form)
+            })
+            .then(() => {
+                form.style.display = 'none';
+                successMessage.style.display = 'block';
+            })
+            .catch(error => console.error('Error!', error.message));
+        });
+    }
 });
